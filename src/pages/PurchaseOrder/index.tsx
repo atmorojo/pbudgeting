@@ -1,8 +1,12 @@
 import { useState } from "preact/hooks";
+
+import { type Product } from "@/types/product";
+import { type Cart, type CartItem, makeCartItem } from "@/types/cart";
+
 import { Sheet } from "@/components/Sheet";
-import { Product } from "@/types/product";
 import { ProductAddRow } from "@/components/ProductAddRow";
-import { Cart, CartItem, makeCartItem } from "@/types/cart";
+import { GrandTotal } from "@/components/GrandTotal";
+
 import products from "@/data/product_fake.json";
 
 export function POPage() {
@@ -13,7 +17,7 @@ export function POPage() {
   }
 
   return (
-    <div class="p-4">
+    <div class="flex flex-col h-full p-4">
       <h1 class="text-xl font-semibold mb-4">Purchase Orders</h1>
 
       <Sheet<CartItem>
@@ -32,7 +36,7 @@ export function POPage() {
       />
       <ProductAddRow products={products} onAdd={handleAdd} />
 
-      {/* Extension point: actions/buttons will go here later */}
+      <GrandTotal cart={cart} />
     </div>
   );
 }
