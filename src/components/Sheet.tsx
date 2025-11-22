@@ -1,6 +1,8 @@
 import { useState } from "preact/hooks";
 import { ProductAddRow } from "@/components/ProductAddRow";
 import { type ComponentChildren } from "preact";
+import { Table, TableRow } from "@/components/ui/table";
+import { cn } from "@/utils";
 
 type RowProps<T> = {
   item: T;
@@ -21,19 +23,18 @@ function Row<T extends object>({
   };
 
   return (
-    <div
-      class={`flex items-center px-4 py-2 cursor-pointer border-b last:border-b-0
-        ${selected ? "bg-blue-100" : "hover:bg-gray-50"}`}
+    <TableRow
+      className={cn(selected && "bg-blue-100")}
       onClick={() => onSelect(item)}
     >
       {children
         ? children
         : Object.entries(item).map(([key, val]) => (
-            <div class="flex-1 text-sm text-gray-800" key={key}>
+            <TableCell key={key}>
               {formatValue(val)}
-            </div>
+            </TableCell>
           ))}
-    </div>
+    </TableRow>
   );
 }
 
@@ -51,7 +52,7 @@ export function Sheet<T extends object>({
   const [selectedId, setSelectedId] = useState<string | number | null>(null);
 
   return (
-    <div class="border rounded-md overflow-hidden">
+    <Table>
       {items.map((item) => {
         const id = getId(item);
         return (
@@ -65,6 +66,6 @@ export function Sheet<T extends object>({
           </Row>
         );
       })}
-    </div>
+    </Table>
   );
 }

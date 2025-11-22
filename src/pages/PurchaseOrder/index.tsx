@@ -6,6 +6,8 @@ import { type Cart, type CartItem, makeCartItem } from "@/types/cart";
 import { Sheet } from "@/components/Sheet";
 import { ProductAddRow } from "@/components/ProductAddRow";
 import { GrandTotal } from "@/components/GrandTotal";
+import { TableCell } from "@/components/ui/table";
+import { cn } from "@/utils";
 
 import products from "@/data/product_fake.json";
 
@@ -25,12 +27,12 @@ export function POPage() {
         getId={(po) => po.product.id}
         renderRow={(item) => (
           <>
-            <div class="flex-1">{item.product.name}</div>
-            <div class="w-24 text-right">
+            <TableCell>{item.product.name}</TableCell>
+            <TableCell className={cn("text-right")}>
               {item.product.price.toLocaleString()}
-            </div>
-            <div class="w-12 text-center">{item.qty}</div>
-            <div class="w-24 text-right">{item.subtotal.toLocaleString()}</div>
+            </TableCell>
+            <TableCell className={cn("text-center")}>{item.qty}</TableCell>
+            <TableCell className={cn("text-right")}>{item.subtotal.toLocaleString()}</TableCell>
           </>
         )}
       />
