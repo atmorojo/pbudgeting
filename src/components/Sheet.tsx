@@ -1,8 +1,14 @@
 import { useState } from "preact/hooks";
-import { ProductAddRow } from "@/components/ProductAddRow";
 import { type ComponentChildren } from "preact";
-import { Table, TableRow } from "@/components/ui/table";
-import { cn } from "@/utils";
+import { toTitleCase } from "@/utils";
+import {
+  Table,
+  TableHeader,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+} from "@/components/ui/table";
 
 type RowProps<T> = {
   item: T;
@@ -17,22 +23,15 @@ function Row<T extends object>({
   onSelect,
   children,
 }: RowProps<T>) {
-  const formatValue = (val: unknown): string => {
-    if (typeof val === "number") return val.toLocaleString("id-ID");
-    return String(val);
-  };
-
   return (
     <TableRow
-      className={cn(selected && "bg-blue-100")}
+      className={selected && "bg-blue-100"}
       onClick={() => onSelect(item)}
     >
       {children
         ? children
         : Object.entries(item).map(([key, val]) => (
-            <TableCell key={key}>
-              {formatValue(val)}
-            </TableCell>
+            <TableCell key={key}>{val}</TableCell>
           ))}
     </TableRow>
   );
@@ -40,6 +39,7 @@ function Row<T extends object>({
 
 type SheetProps<T> = {
   items: T[];
+  colNames: [string, string][];
   getId: (item: T) => string | number;
   renderRow?: (item: T) => preact.VNode;
 };
@@ -47,25 +47,37 @@ type SheetProps<T> = {
 export function Sheet<T extends object>({
   items,
   getId,
+  colNames,
   renderRow,
 }: SheetProps<T>) {
   const [selectedId, setSelectedId] = useState<string | number | null>(null);
 
   return (
     <Table>
-      {items.map((item) => {
-        const id = getId(item);
-        return (
-          <Row<T>
-            key={id}
-            item={item}
-            selected={selectedId === id}
-            onSelect={() => setSelectedId(id)}
-          >
-            {renderRow ? renderRow(item) : null}
-          </Row>
-        );
-      })}
+      <TableHeader>
+        <TableRow>
+          {colNames.map((col) => (
+            <TableHead className={col[1] ? col[1] : "text-start"}>
+              {toTitleCase(col[0])}
+            </TableHead>
+          ))}
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {items.map((item) => {
+          const id = getId(item);
+          return (
+            <Row<T>
+              key={id}
+              item={item}
+              selected={selectedId === id}
+              onSelect={() => setSelectedId(id)}
+            >
+              {renderRow ? renderRow(item) : null}
+            </Row>
+          );
+        })}
+      </TableBody>
     </Table>
   );
 }
