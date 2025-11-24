@@ -1,6 +1,12 @@
 import { type Product } from "@/types/product";
 
-export function AutocompletePopup({ show, results, highlight, onSelect }) {
+export function AutocompletePopup({
+  show,
+  results,
+  highlight,
+  onHover,
+  onSelect,
+}) {
   if (!show || results.length === 0) return null;
 
   return (
@@ -8,10 +14,11 @@ export function AutocompletePopup({ show, results, highlight, onSelect }) {
       {results.map((p: Product, idx: number) => (
         <div
           key={p.id}
-          class={
-            "p-2 cursor-pointer " + (idx === highlight ? "bg-blue-100" : "")
+          className={
+            "p-2 cursor-pointer " + (idx === highlight ? "bg-sky-400" : "")
           }
-          onMouseDown={() => onSelect(p)}
+          onClick={() => onSelect(p.name)}
+          onMouseEnter={() => onHover(idx)}
         >
           {p.name}
         </div>

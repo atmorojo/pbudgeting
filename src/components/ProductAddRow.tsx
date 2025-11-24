@@ -1,8 +1,13 @@
 import { useState, useEffect, useRef } from "preact/hooks";
-import { useDebounce } from "@/hooks/useDebounce";
 import { fuzzyMatch } from "@/utils/fuzzyMatch";
 import { type Product } from "@/types/product";
 import { AutocompletePopup } from "@/components/AutoCompletePopup";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
+import { PlusIcon } from "lucide-react";
 
 export function ProductAddRow({
   products,
@@ -36,10 +41,7 @@ export function ProductAddRow({
 
     if (e.key === "Enter") {
       e.preventDefault();
-      setName(matches[highlight].name);
-      setShowPopup(false);
-      qtyRef.current!.focus();
-      qtyRef.current!.select();
+      handleSelect(matches[highlight].name);
     }
 
     if (e.key === "Escape") {
@@ -55,6 +57,13 @@ export function ProductAddRow({
     }
   }
 
+  function handleSelect(name: string) {
+    setName(name);
+    setShowPopup(false);
+    qtyRef.current!.focus();
+    qtyRef.current!.select();
+  }
+
   function selectProduct(productName: String) {
     const product = products.find((p) => p.name === productName);
     if (!product) return;
@@ -68,42 +77,42 @@ export function ProductAddRow({
   }
 
   return (
-    <div class="flex items-center gap-2 p-2 relative">
-      {/* name */}
-      <div class="relative flex-1">
-        <input
+    <InputGroup className="w-full">
+      <div className="relative flex-1">
+        <InputGroupInput
           ref={nameRef}
-          class="border rounded w-full px-2 py-1"
           value={name}
+          placeholder="Tambah bahan…"
           onKeyDown={handleNameKeyDown}
           onInput={(e) => {
             setName(e.currentTarget.value);
             setShowPopup(e.currentTarget.value.trim() !== "");
           }}
-          placeholder="Tambah bahan…"
         />
-
         <AutocompletePopup
           show={showPopup}
           results={matches}
           highlight={highlight}
-          onSelect={selectProduct}
+          onHover={setHighlight}
+          onSelect={handleSelect}
         />
       </div>
 
-      {/* qty */}
-      <input
-        ref={qtyRef}
-        class="border rounded w-16 px-2 py-1 text-center"
-        type="number"
-        value={qty}
-        onKeyDown={handleQtyKeyDown}
-        onInput={(e) => {
-          const v = Number(e.currentTarget.value);
-          setQty(v);
-        }}
-        min={1}
-      />
-    </div>
+      <InputGroupAddon>
+        <PlusIcon />
+      </InputGroupAddon>
+
+      <InputGroupAddon align="inline-end">
+        <InputGroupInput
+          ref={qtyRef}
+          type="number"
+          value={qty}
+          min={1}
+          className="w-25 text-center"
+          onKeyDown={handleQtyKeyDown}
+          onInput={(e) => setQty(Number(e.currentTarget.value))}
+        />
+      </InputGroupAddon>
+    </InputGroup>
   );
 }

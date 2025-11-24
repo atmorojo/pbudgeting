@@ -57,7 +57,9 @@ export function Sheet<T extends object>({
       <TableHeader>
         <TableRow>
           {colNames.map((col) => (
-            <TableHead className={col[1] ? col[1] : "text-start"}>
+            <TableHead
+              className={"font-bold " + (col[1] ? col[1] : " text-start")}
+            >
               {toTitleCase(col[0])}
             </TableHead>
           ))}
